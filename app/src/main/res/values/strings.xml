@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Y Found</string>
+    <string name="image">image</string>
+    <string name="title_activity_homepage">MainActivity</string>
+    <string name="title_home">Barang</string>
+    <string name="title_order">Orderan Barang</string>
+    <string name="title_delivery">Pengiriman Barang</string>
+    <string name="button">button</string>
+</resources>

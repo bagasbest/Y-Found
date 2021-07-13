@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "363791463993",
+    "project_id": "yfound-63427",
+    "storage_bucket": "yfound-63427.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363791463993:android:41b4787ad132f222d73fe8",
+        "android_client_info": {
+          "package_name": "com.yfound.yfound"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363791463993-28u0g5d4smei848ft5rjmscpij0r3qb5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlGbSx_8E8OkTOxY-XiZiRsmQHBYHiuAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363791463993-28u0g5d4smei848ft5rjmscpij0r3qb5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
