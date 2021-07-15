@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -69,7 +70,14 @@ class CartActivity : AppCompatActivity() {
     private fun clickOrder() {
         binding?.orderBtn?.setOnClickListener {
 
+            val location = binding?.location?.text.toString().trim()
+            if (location.isEmpty()) {
+                binding?.location?.error = "Masukkan lokasi tujan pengiriman terlebih dahulu"
+                return@setOnClickListener
+            }
+
             val cartList2 = ArrayList<CartModel2>()
+
 
             binding?.orderBtn?.text = "Silahkan tunggu"
             binding?.orderBtn?.setBackgroundColor(R.color.mermud)
@@ -86,7 +94,7 @@ class CartActivity : AppCompatActivity() {
 
             // ambil tanggal hari ini dengan format: dd - MMM - yyyy, HH:mm:ss
             @SuppressLint("SimpleDateFormat") val getDate =
-                SimpleDateFormat("dd - MMMM - yyyy, hh:mm:ss")
+                SimpleDateFormat("dd MMMM yyyy, hh:mm:ss")
             val format: String = getDate.format(Date())
 
             val data = hashMapOf(
@@ -94,7 +102,9 @@ class CartActivity : AppCompatActivity() {
                 "buyerId" to uid,
                 "orderId" to timeInMillis,
                 "orderDate" to format,
-                "cart" to cartList2
+                "cart" to cartList2,
+                "location" to location,
+                "status" to "not shipped"
             )
 
             Firebase
@@ -107,6 +117,7 @@ class CartActivity : AppCompatActivity() {
                         deleteAllCart()
                     }
                     else {
+                        showAlertDialog("false")
                         binding?.orderBtn?.text = "Order Barang pada keranjang"
                         binding?.orderBtn?.setBackgroundColor(R.color.primary)
                     }
@@ -114,6 +125,7 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ResourceAsColor", "SetTextI18n")
     private fun deleteAllCart() {
         for (i in 0 until cartList.size) {
             cartList[i].cartId?.let {
@@ -124,17 +136,35 @@ class CartActivity : AppCompatActivity() {
                     .delete()
                     .addOnCompleteListener { task ->
                         if(task.isSuccessful) {
-                            Log.d(i.toString(), "Berhasil")
+                            showAlertDialog("Sukses")
+                            binding?.orderBtn?.visibility = View.GONE
+                            binding?.recyclerView?.visibility = View.GONE
+                            binding?.noData?.visibility = View.VISIBLE
+                            binding?.textInputLayout10?.visibility = View.GONE
                         } else {
-                            Log.d(i.toString(), "Gagal")
+                            showAlertDialog("Gagal")
+                            binding?.orderBtn?.text = "Order Barang pada keranjang"
+                            binding?.orderBtn?.setBackgroundColor(R.color.primary)
                         }
                     }
             }
         }
+    }
 
-        binding?.orderBtn?.visibility = View.GONE
-        binding?.recyclerView?.visibility = View.GONE
-        binding?.noData?.visibility = View.VISIBLE
+    private fun showAlertDialog(result: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("$result Order Barang")
+        builder.setMessage("Anda $result mengorder barang dari keranjang")
+        if(result == "Sukses") {
+            builder.setIcon(R.drawable.ic_baseline_check_circle_24)
+        }
+        else {
+            builder.setIcon(R.drawable.ic_baseline_clear_24)
+        }
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 
     private fun initRecyclerView() {

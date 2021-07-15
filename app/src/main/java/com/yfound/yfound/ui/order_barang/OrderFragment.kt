@@ -27,6 +27,9 @@ class OrderFragment : Fragment() {
 
         _binding = FragmentOrderBinding.inflate(inflater, container, false)
 
+        val sectionPagerAdapter = activity?.let { SectionPagerAdapter(it, childFragmentManager) }
+        binding.viewPager.adapter = sectionPagerAdapter
+        binding.tabs.setupWithViewPager(binding.viewPager)
 
         return binding.root
     }

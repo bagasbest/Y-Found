@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YFound">
-        <activity android:name=".ui.home.verifikasi_sales.VerifikasiDetailActivity"></activity>
+        <activity android:name=".ui.order_barang.OrderDetailActivity"></activity>
+        <activity android:name=".ui.home.verifikasi_sales.VerifikasiDetailActivity" />
         <activity android:name=".ui.home.verifikasi_sales.VerifikasiActivity" />
         <activity android:name=".ui.home.pendaftaran_sales.AddSalesActivity" />
         <activity android:name=".ui.home.keranjang_belanjaan.CartActivity" />
