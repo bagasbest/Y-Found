@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.yfound.yfound.HomepageActivity
 import com.yfound.yfound.LoginActivity
 import com.yfound.yfound.R
 import com.yfound.yfound.databinding.FragmentHomeBinding
 import com.yfound.yfound.ui.home.keranjang_belanjaan.CartActivity
 import com.yfound.yfound.ui.home.pendaftaran_sales.AddSalesActivity
+import com.yfound.yfound.ui.home.verifikasi_sales.VerifikasiActivity
 import java.util.*
 
 
@@ -84,13 +86,42 @@ class HomeFragment : Fragment() {
         }
 
         binding.menu.setOnClickListener {
-            showAlertDialog()
+            if (role == "admin") {
+                showAdminMenu()
+            } else if (role == "sales") {
+                showSalesMenu()
+            } else if (role == "user" || role == "waiting") {
+                showUserMenu()
+            }
         }
 
     }
 
-    private fun showAlertDialog() {
-        val options = arrayOf("Keranjang Barang", "Verifikasi Sales", "Pendaftaran Sales", "Logout")
+    private fun showAdminMenu() {
+        val options = arrayOf("Verifikasi Sales", "Logout")
+
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Menu Pilihan")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    // VERIFIKASI SALES
+                    dialog.dismiss()
+                    startActivity(Intent(activity, VerifikasiActivity::class.java))
+
+                }
+                1 -> {
+                    // LOGOUT
+                    dialog.dismiss()
+                    clickLogout()
+                }
+            }
+        }
+        builder.create().show()
+    }
+
+    private fun showSalesMenu() {
+        val options = arrayOf("Keranjang Barang", "Logout")
 
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Menu Pilihan")
@@ -102,16 +133,6 @@ class HomeFragment : Fragment() {
                     startActivity(Intent(activity, CartActivity::class.java))
                 }
                 1 -> {
-                    // VERIFIKASI SALES
-                    dialog.dismiss()
-
-                }
-                2 -> {
-                    // PENDAFTARAN SALES
-                    dialog.dismiss()
-                    startActivity(Intent(activity, AddSalesActivity::class.java))
-                }
-                3 -> {
                     // LOGOUT
                     dialog.dismiss()
                     clickLogout()
@@ -121,24 +142,64 @@ class HomeFragment : Fragment() {
         builder.create().show()
     }
 
-    private fun clickLogout() {
-            val dialog = context?.let { it1 -> AlertDialog.Builder(it1) }
-            dialog?.setTitle("Konfirmasi Logout")
-            dialog?.setMessage("Apakah anda yakin ingin logout ?")
-            dialog?.setIcon(R.drawable.ic_baseline_logout_24)
-            dialog?.setPositiveButton("YA"){ it2,_ ->
-                // sign out dari firebase autentikasi
-                FirebaseAuth.getInstance().signOut()
-                // go to login activity
-                val intent = Intent(context, LoginActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                it2.dismiss()
-                startActivity(intent)
-                activity?.finish()
+    private fun showUserMenu() {
+        val options = arrayOf("Menjadi Sales", "Logout")
+
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Menu Pilihan")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    // PENDAFTARAN SALES
+                    dialog.dismiss()
+                    if (role == "waiting") {
+                        showWaitingDialog()
+                    } else if (role == "user") {
+                        startActivity(Intent(activity, AddSalesActivity::class.java))
+                    }
+                }
+                1 -> {
+                    // LOGOUT
+                    dialog.dismiss()
+                    clickLogout()
+                }
             }
-            dialog?.show()
+        }
+        builder.create().show()
     }
 
+
+    private fun showWaitingDialog() {
+        val alertDialog = AlertDialog.Builder(activity)
+        alertDialog.setTitle("Registrasi Hanya Boleh Sekali")
+        alertDialog.setIcon(R.drawable.ic_baseline_check_circle_24)
+        alertDialog.setMessage("Anda berhasil terdaftar sebagai sales pada aplikasi\n\nSilahkan tunggu beberapa saat, admin Y Found akan memverifikasi data anda, dan sesaat setelahnya akan dapat melakukan order")
+        alertDialog.setPositiveButton("OKE") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.show()
+    }
+
+    private fun clickLogout() {
+        val dialog = context?.let { it1 -> AlertDialog.Builder(it1) }
+        dialog?.setTitle("Konfirmasi Logout")
+        dialog?.setMessage("Apakah anda yakin ingin logout ?")
+        dialog?.setIcon(R.drawable.ic_baseline_logout_24)
+        dialog?.setPositiveButton("YA") { it2, _ ->
+            // sign out dari firebase autentikasi
+            FirebaseAuth.getInstance().signOut()
+            // go to login activity
+            val intent = Intent(context, LoginActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            it2.dismiss()
+            startActivity(intent)
+            activity?.finish()
+        }
+        dialog?.setNegativeButton("Tidak") { dialogs, _ ->
+            dialogs.dismiss()
+        }
+        dialog?.show()
+    }
 
 
     private fun searchProduct() {

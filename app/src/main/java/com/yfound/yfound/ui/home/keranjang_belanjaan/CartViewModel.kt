@@ -11,37 +11,7 @@ import com.google.firebase.ktx.Firebase
 class CartViewModel : ViewModel() {
     private val cartList = MutableLiveData<ArrayList<CartModel>>()
     private val TAG = CartModel::class.java.simpleName
-    private val listItem = ArrayList<CartModel>()
-
-    fun setAllCart() {
-        listItem.clear()
-
-        try {
-            Firebase
-                .firestore
-                .collection("cart")
-                .get()
-                .addOnSuccessListener { documents ->
-                    for(document in documents) {
-                        val model = CartModel()
-                        model.productId = document.data["productId"].toString()
-                        model.name = document.data["name"].toString()
-                        model.dp = document.data["dp"].toString()
-                        model.quantity = document.data["quantity"].toString()
-                        model.buyerId = document.data["buyerId"].toString()
-                        model.cartId = document.data["cartId"].toString()
-
-                        listItem.add(model)
-                    }
-                    cartList.postValue(listItem)
-                }
-                .addOnFailureListener {
-                    Log.e(TAG, it.message.toString())
-                }
-        } catch (error: Exception) {
-            error.printStackTrace()
-        }
-    }
+    val listItem = ArrayList<CartModel>()
 
     fun setCartByBuyerId(buyerId:String) {
         listItem.clear()
