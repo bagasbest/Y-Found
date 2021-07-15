@@ -91,6 +91,7 @@ class RegisterActivity : AppCompatActivity() {
             "name" to name,
             "email" to email,
             "uid" to uid,
+            "role" to "user"
         )
 
         if (uid != null) {

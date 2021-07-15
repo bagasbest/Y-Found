@@ -1,5 +1,6 @@
 package com.yfound.yfound.ui.home
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -7,9 +8,15 @@ import android.text.TextWatcher
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.yfound.yfound.LoginActivity
+import com.yfound.yfound.R
 import com.yfound.yfound.databinding.FragmentHomeBinding
+import com.yfound.yfound.ui.home.keranjang_belanjaan.CartActivity
+import com.yfound.yfound.ui.home.pendaftaran_sales.AddSalesActivity
 import java.util.*
 
 
@@ -22,6 +29,7 @@ class HomeFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var adapter: HomeAdapter
+    private var role: String? = null
 
     override fun onResume() {
         super.onResume()
@@ -41,7 +49,31 @@ class HomeFragment : Fragment() {
         // CARI PRODUK
         searchProduct()
 
+        // CEK APAKAH ADMIN, SALES, ATAU USER BIASA
+        checkRole()
+
         return binding.root
+    }
+
+    private fun checkRole() {
+        val uid = FirebaseAuth
+            .getInstance()
+            .currentUser
+            ?.uid
+
+        if (uid != null) {
+            Firebase
+                .firestore
+                .collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener {
+                    role = it["role"].toString()
+                    if (role == "admin") {
+                        binding.fabAddProduct.visibility = View.VISIBLE
+                    }
+                }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,7 +83,63 @@ class HomeFragment : Fragment() {
             startActivity(Intent(activity, AddProductActivity::class.java))
         }
 
+        binding.menu.setOnClickListener {
+            showAlertDialog()
+        }
+
     }
+
+    private fun showAlertDialog() {
+        val options = arrayOf("Keranjang Barang", "Verifikasi Sales", "Pendaftaran Sales", "Logout")
+
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle("Menu Pilihan")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> {
+                    // KERANJANG BELANJAAN
+                    dialog.dismiss()
+                    startActivity(Intent(activity, CartActivity::class.java))
+                }
+                1 -> {
+                    // VERIFIKASI SALES
+                    dialog.dismiss()
+
+                }
+                2 -> {
+                    // PENDAFTARAN SALES
+                    dialog.dismiss()
+                    startActivity(Intent(activity, AddSalesActivity::class.java))
+                }
+                3 -> {
+                    // LOGOUT
+                    dialog.dismiss()
+                    clickLogout()
+                }
+            }
+        }
+        builder.create().show()
+    }
+
+    private fun clickLogout() {
+            val dialog = context?.let { it1 -> AlertDialog.Builder(it1) }
+            dialog?.setTitle("Konfirmasi Logout")
+            dialog?.setMessage("Apakah anda yakin ingin logout ?")
+            dialog?.setIcon(R.drawable.ic_baseline_logout_24)
+            dialog?.setPositiveButton("YA"){ it2,_ ->
+                // sign out dari firebase autentikasi
+                FirebaseAuth.getInstance().signOut()
+                // go to login activity
+                val intent = Intent(context, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                it2.dismiss()
+                startActivity(intent)
+                activity?.finish()
+            }
+            dialog?.show()
+    }
+
+
 
     private fun searchProduct() {
         binding.searchEt.addTextChangedListener(object : TextWatcher {
@@ -63,8 +151,7 @@ class HomeFragment : Fragment() {
                     val query = edit.toString().toLowerCase(Locale.getDefault())
                     initRecyclerView()
                     initViewModel(query)
-                }
-                else {
+                } else {
                     initRecyclerView()
                     initViewModel("all")
                 }
@@ -73,28 +160,31 @@ class HomeFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        binding.rvProduct.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.rvProduct.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         adapter = HomeAdapter()
         binding.rvProduct.adapter = adapter
     }
 
     private fun initViewModel(query: String) {
         binding.progressBar.visibility = View.VISIBLE
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[HomeViewModel::class.java]
+        val viewModel =
+            ViewModelProvider(
+                this,
+                ViewModelProvider.NewInstanceFactory()
+            )[HomeViewModel::class.java]
 
-        if(query == "all") {
+        if (query == "all") {
             viewModel.setAllProduct()
-        }
-        else {
+        } else {
             viewModel.setProductByQuery(query)
         }
 
         viewModel.getAllProduct().observe(viewLifecycleOwner, { productList ->
-            if(productList.size > 0) {
+            if (productList.size > 0) {
                 binding.noData.visibility = View.GONE
                 adapter.setData(productList)
-            }
-            else {
+            } else {
                 binding.noData.visibility = View.VISIBLE
             }
             binding.progressBar.visibility = View.GONE

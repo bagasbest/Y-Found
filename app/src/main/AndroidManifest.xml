@@ -12,12 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YFound">
-        <activity android:name=".ui.home.HomeDetailActivity"
-            />
+        <activity android:name=".ui.home.pendaftaran_sales.AddSalesActivity"></activity>
+        <activity android:name=".ui.home.keranjang_belanjaan.CartActivity" />
+        <activity android:name=".ui.home.HomeDetailActivity" />
         <activity android:name=".ui.home.AddProductActivity" />
         <activity
             android:name=".HomepageActivity"
-            android:theme="@style/Theme.YFoundNoActionBar"/>
+            android:theme="@style/Theme.YFoundNoActionBar" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity
