@@ -98,7 +98,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showAdminMenu() {
-        val options = arrayOf("Verifikasi Sales", "Logout")
+        val options = arrayOf("Verifikasi Sales", "Keranjang Barang", "Logout")
 
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Menu Pilihan")
@@ -111,6 +111,12 @@ class HomeFragment : Fragment() {
 
                 }
                 1 -> {
+                    // KERANJANG BELANJAAN
+                    dialog.dismiss()
+                    startActivity(Intent(activity, CartActivity::class.java))
+                }
+
+                2 -> {
                     // LOGOUT
                     dialog.dismiss()
                     clickLogout()

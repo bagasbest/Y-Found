@@ -4,17 +4,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.yfound.yfound.ui.home.keranjang_belanjaan.CartModel2
 
 
 class OrderViewModel : ViewModel() {
     private val orderList = MutableLiveData<ArrayList<OrderModel>>()
     private val TAG = OrderModel::class.java.simpleName
     private val listItem = ArrayList<OrderModel>()
-    private val cartList = ArrayList<CartModel2>()
 
     fun setAllOrderByStatus(status: String) {
         listItem.clear()

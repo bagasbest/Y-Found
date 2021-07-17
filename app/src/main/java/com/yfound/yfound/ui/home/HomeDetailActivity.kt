@@ -1,26 +1,19 @@
 package com.yfound.yfound.ui.home
 
-import android.R
-import android.R.attr.description
-import android.R.id
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.yfound.yfound.databinding.ActivityHomeDetailBinding
 import com.yfound.yfound.databinding.PopupQuantityBinding
-import java.text.SimpleDateFormat
 import java.util.*
 
 

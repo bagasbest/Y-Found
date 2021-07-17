@@ -18,4 +18,18 @@ data class OrderModel(
 data class OrderCartModel(
     var name: String? = null,
     var quantity: String? = null,
+    var dp: String? = null,
+) : Parcelable
+
+@Parcelize
+data class OrderCartModel2(
+    var name: String? = null,
+    var quantity: String? = null,
+    var dp: String? = null,
+) : Parcelable
+
+@Parcelize
+data class OrderQtyModel(
+    var quantity: String? = null,
+    var qtyHold: String? = null,
 ) : Parcelable

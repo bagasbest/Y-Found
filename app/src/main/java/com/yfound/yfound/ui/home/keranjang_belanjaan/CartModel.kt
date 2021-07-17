@@ -11,7 +11,9 @@ data class CartModel(
     var buyerId: String? = null,
     var cartId: String? = null,
 )
+
 data class CartModel2(
     var name: String? = null,
-    var quantity: String? = null
+    var quantity: String? = null,
+    var dp: String? = null,
 )

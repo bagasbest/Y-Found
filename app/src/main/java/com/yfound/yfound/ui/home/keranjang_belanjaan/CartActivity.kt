@@ -3,7 +3,6 @@ package com.yfound.yfound.ui.home.keranjang_belanjaan
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
@@ -86,6 +85,7 @@ class CartActivity : AppCompatActivity() {
                 val model = CartModel2()
                 model.name = cartList[i].name
                 model.quantity = cartList[i].quantity
+                model.dp = cartList[i].dp
 
                 cartList2.add(model)
             }
