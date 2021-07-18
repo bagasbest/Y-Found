@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yfound.yfound.databinding.ItemVerificationBinding
 
-class VerifikasiAdapter : RecyclerView.Adapter<VerifikasiAdapter.ViewHolder>() {
+class VerifikasiAdapter(private val status: String) : RecyclerView.Adapter<VerifikasiAdapter.ViewHolder>() {
 
     private val listSales = ArrayList<VerifikasiModel>()
     fun setData(items: ArrayList<VerifikasiModel>) {
@@ -33,6 +33,7 @@ class VerifikasiAdapter : RecyclerView.Adapter<VerifikasiAdapter.ViewHolder>() {
                 view.setOnClickListener{
                     val intent =  Intent(itemView.context, VerifikasiDetailActivity::class.java)
                     intent.putExtra(VerifikasiDetailActivity.EXTRA_SALES, model)
+                    intent.putExtra(VerifikasiDetailActivity.EXTRA_STATUS, status)
                     itemView.context.startActivity(intent)
                 }
             }

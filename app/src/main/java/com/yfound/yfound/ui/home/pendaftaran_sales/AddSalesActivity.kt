@@ -81,7 +81,8 @@ class AddSalesActivity : AppCompatActivity() {
             "phone" to phone,
             "selfPhoto" to selfPhopto,
             "ktp" to ktp,
-            "uid" to uid
+            "uid" to uid,
+            "status" to "waiting",
         )
 
         if (uid != null) {

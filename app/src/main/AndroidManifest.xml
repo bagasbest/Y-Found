@@ -14,7 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YFound">
-        <activity android:name=".ui.pengiriman_barang.DeliveryDetailActivity"></activity>
+        <activity android:name=".ui.home.verifikasi_pendaftaran.AllUserActivity"></activity>
+        <activity android:name=".ui.home.verifikasi_pendaftaran.VerifikasiUserDetailActivity" />
+        <activity android:name=".ui.home.verifikasi_pendaftaran.VerifikasiUserActivity" />
+        <activity android:name=".ui.home.verifikasi_sales.AllSalesActivity" />
+        <activity android:name=".ui.home.HomeEditProductActivity" />
+        <activity android:name=".ui.pengiriman_barang.DeliveryDetailActivity" />
         <activity android:name=".ui.order_barang.OrderDetailSendActivity" />
         <activity android:name=".ui.order_barang.OrderDetailActivity" />
         <activity android:name=".ui.home.verifikasi_sales.VerifikasiDetailActivity" />

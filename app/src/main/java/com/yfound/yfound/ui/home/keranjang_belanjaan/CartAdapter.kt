@@ -59,7 +59,7 @@ class CartAdapter : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
                                 .delete()
                                 .addOnCompleteListener { task ->
                                     if(task.isSuccessful) {
-                                        listCart.remove(listCart[adapterPosition])
+                                        listCart.remove(listCart[layoutPosition])
                                         notifyDataSetChanged()
                                         Toast.makeText(itemView.context, "Menghapus ${cartModel.name}", Toast.LENGTH_SHORT).show()
                                     }

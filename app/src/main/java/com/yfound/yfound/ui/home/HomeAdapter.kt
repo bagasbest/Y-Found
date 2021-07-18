@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.yfound.yfound.databinding.ItemProductBinding
 
-class HomeAdapter : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomeAdapter(private val role: String?) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
 
     private val listProduct = ArrayList<HomeModel>()
     fun setData(items: ArrayList<HomeModel>) {
@@ -28,6 +28,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
                 itemProduct.setOnClickListener {
                     val intent = Intent(itemView.context, HomeDetailActivity::class.java)
                     intent.putExtra(HomeDetailActivity.EXTRA_PRODUCT, model)
+                    intent.putExtra(HomeDetailActivity.EXTRA_ROLE, role)
                     itemView.context.startActivity(intent)
                 }
             }

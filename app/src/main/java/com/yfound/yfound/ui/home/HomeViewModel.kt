@@ -52,6 +52,7 @@ class HomeViewModel : ViewModel() {
                 .firestore
                 .collection("product")
                 .whereGreaterThanOrEqualTo("name", query)
+                .whereLessThanOrEqualTo("name", query+ '\uf8ff')
                 .get()
                 .addOnSuccessListener { documents ->
                     for(document in documents) {

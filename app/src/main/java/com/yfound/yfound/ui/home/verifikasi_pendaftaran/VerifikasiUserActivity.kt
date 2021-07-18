@@ -1,4 +1,4 @@
-package com.yfound.yfound.ui.home.verifikasi_sales
+package com.yfound.yfound.ui.home.verifikasi_pendaftaran
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,48 +6,49 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yfound.yfound.databinding.ActivityVerifikasiBinding
+import com.yfound.yfound.databinding.ActivityVerifikasiUserBinding
+import com.yfound.yfound.ui.home.verifikasi_sales.VerifikasiViewModel
 
-class VerifikasiActivity : AppCompatActivity() {
+class VerifikasiUserActivity : AppCompatActivity() {
 
-    var binding: ActivityVerifikasiBinding? = null
-    private lateinit var adapter: VerifikasiAdapter
+    var binding: ActivityVerifikasiUserBinding? = null
+    private lateinit var adapter: VerifikasiUserAdapter
 
     override fun onResume() {
         super.onResume()
         initRecyclerView()
         initViewModel()
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityVerifikasiBinding.inflate(layoutInflater)
+        binding = ActivityVerifikasiUserBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        supportActionBar?.title = "Sales Pending(belum diterima)"
+        supportActionBar?.title = "Verifikasi Akun Pengguna"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
         binding?.button?.setOnClickListener {
-            startActivity(Intent(this, AllSalesActivity::class.java))
+            startActivity(Intent(this, AllUserActivity::class.java))
         }
+
 
     }
 
     private fun initRecyclerView() {
         binding?.rvVerification?.layoutManager = LinearLayoutManager(this)
-        adapter = VerifikasiAdapter("waiting")
+        adapter = VerifikasiUserAdapter("waiting")
         binding?.rvVerification?.adapter = adapter
     }
 
     private fun initViewModel() {
         val viewModel = ViewModelProvider(
             this, ViewModelProvider.NewInstanceFactory()
-        )[VerifikasiViewModel::class.java]
+        )[VerifikasiUserViewModel::class.java]
 
         binding?.progressBar?.visibility = View.VISIBLE
-        viewModel.setAllSales()
-        viewModel.getAllSales().observe(this, { salesList ->
+        viewModel.setWaitingUser()
+        viewModel.getWaitingUser().observe(this, { salesList ->
             if(salesList.size > 0) {
                 binding?.noData?.visibility = View.GONE
                 adapter.setData(salesList)
@@ -69,4 +70,6 @@ class VerifikasiActivity : AppCompatActivity() {
         super.onDestroy()
         binding = null
     }
+
+
 }

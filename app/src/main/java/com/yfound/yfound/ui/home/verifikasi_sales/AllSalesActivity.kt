@@ -1,42 +1,34 @@
 package com.yfound.yfound.ui.home.verifikasi_sales
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yfound.yfound.databinding.ActivityVerifikasiBinding
+import com.yfound.yfound.databinding.ActivityAllSalesBinding
 
-class VerifikasiActivity : AppCompatActivity() {
+class AllSalesActivity : AppCompatActivity() {
 
-    var binding: ActivityVerifikasiBinding? = null
+    var binding: ActivityAllSalesBinding? = null
     private lateinit var adapter: VerifikasiAdapter
 
-    override fun onResume() {
-        super.onResume()
-        initRecyclerView()
-        initViewModel()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityVerifikasiBinding.inflate(layoutInflater)
+        binding = ActivityAllSalesBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        supportActionBar?.title = "Sales Pending(belum diterima)"
+        supportActionBar?.title = "Semua Sales Terdaftar"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
-        binding?.button?.setOnClickListener {
-            startActivity(Intent(this, AllSalesActivity::class.java))
-        }
+        initRecyclerView()
+        initViewModel()
 
     }
 
     private fun initRecyclerView() {
         binding?.rvVerification?.layoutManager = LinearLayoutManager(this)
-        adapter = VerifikasiAdapter("waiting")
+        adapter = VerifikasiAdapter("active")
         binding?.rvVerification?.adapter = adapter
     }
 
@@ -46,7 +38,7 @@ class VerifikasiActivity : AppCompatActivity() {
         )[VerifikasiViewModel::class.java]
 
         binding?.progressBar?.visibility = View.VISIBLE
-        viewModel.setAllSales()
+        viewModel.setAllActiveSales()
         viewModel.getAllSales().observe(this, { salesList ->
             if(salesList.size > 0) {
                 binding?.noData?.visibility = View.GONE

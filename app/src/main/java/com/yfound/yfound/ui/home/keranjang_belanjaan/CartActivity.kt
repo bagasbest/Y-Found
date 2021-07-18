@@ -77,57 +77,65 @@ class CartActivity : AppCompatActivity() {
 
             val cartList2 = ArrayList<CartModel2>()
 
-
             binding?.orderBtn?.text = "Silahkan tunggu"
             binding?.orderBtn?.setBackgroundColor(R.color.mermud)
 
-            for (i in 0 until cartList.size) {
-                val model = CartModel2()
-                model.name = cartList[i].name
-                model.quantity = cartList[i].quantity
-                model.dp = cartList[i].dp
+            // get all product from cart
+            uid?.let { it1 ->
+                Firebase
+                    .firestore
+                    .collection("cart")
+                    .whereEqualTo("buyerId", it1)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents) {
+                            val model2 = CartModel2()
+                            model2.name = document.data["name"].toString()
+                            model2.quantity = document.data["quantity"].toString()
+                            model2.dp = document.data["dp"].toString()
 
-                cartList2.add(model)
+                            cartList2.add(model2)
+                        }
+
+                        val timeInMillis = System.currentTimeMillis().toString()
+
+                        // ambil tanggal hari ini dengan format: dd - MMM - yyyy, HH:mm:ss
+                        @SuppressLint("SimpleDateFormat") val getDate =
+                            SimpleDateFormat("dd MMMM yyyy, hh:mm:ss")
+                        val format: String = getDate.format(Date())
+
+                        val data = hashMapOf(
+                            "buyerName" to buyerName,
+                            "buyerId" to uid,
+                            "orderId" to timeInMillis,
+                            "orderDate" to format,
+                            "cart" to cartList2,
+                            "location" to location,
+                            "status" to "not shipped"
+                        )
+
+                        Firebase
+                            .firestore
+                            .collection("order")
+                            .document(timeInMillis)
+                            .set(data)
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    deleteAllCart(cartList2)
+                                } else {
+                                    showAlertDialog("false")
+                                    binding?.orderBtn?.text = "Order Barang pada keranjang"
+                                    binding?.orderBtn?.setBackgroundColor(R.color.primary)
+                                }
+                            }
+                    }
             }
-
-            val timeInMillis = System.currentTimeMillis().toString()
-
-            // ambil tanggal hari ini dengan format: dd - MMM - yyyy, HH:mm:ss
-            @SuppressLint("SimpleDateFormat") val getDate =
-                SimpleDateFormat("dd MMMM yyyy, hh:mm:ss")
-            val format: String = getDate.format(Date())
-
-            val data = hashMapOf(
-                "buyerName" to buyerName,
-                "buyerId" to uid,
-                "orderId" to timeInMillis,
-                "orderDate" to format,
-                "cart" to cartList2,
-                "location" to location,
-                "status" to "not shipped"
-            )
-
-            Firebase
-                .firestore
-                .collection("order")
-                .document(timeInMillis)
-                .set(data)
-                .addOnCompleteListener {
-                    if(it.isSuccessful) {
-                        deleteAllCart()
-                    }
-                    else {
-                        showAlertDialog("false")
-                        binding?.orderBtn?.text = "Order Barang pada keranjang"
-                        binding?.orderBtn?.setBackgroundColor(R.color.primary)
-                    }
-                }
         }
     }
 
     @SuppressLint("ResourceAsColor", "SetTextI18n")
-    private fun deleteAllCart() {
-        for (i in 0 until cartList.size) {
+    private fun deleteAllCart(cartList2: ArrayList<CartModel2>) {
+        for (i in 0 until cartList2.size) {
             cartList[i].cartId?.let {
                 Firebase
                     .firestore
@@ -135,16 +143,20 @@ class CartActivity : AppCompatActivity() {
                     .document(it)
                     .delete()
                     .addOnCompleteListener { task ->
-                        if(task.isSuccessful) {
-                            showAlertDialog("Sukses")
-                            binding?.orderBtn?.visibility = View.GONE
-                            binding?.recyclerView?.visibility = View.GONE
-                            binding?.noData?.visibility = View.VISIBLE
-                            binding?.textInputLayout10?.visibility = View.GONE
+                        if (task.isSuccessful) {
+                            if(i==0) {
+                                showAlertDialog("Sukses")
+                                binding?.orderBtn?.visibility = View.GONE
+                                binding?.recyclerView?.visibility = View.GONE
+                                binding?.noData?.visibility = View.VISIBLE
+                                binding?.textInputLayout10?.visibility = View.GONE
+                            }
                         } else {
-                            showAlertDialog("Gagal")
-                            binding?.orderBtn?.text = "Order Barang pada keranjang"
-                            binding?.orderBtn?.setBackgroundColor(R.color.primary)
+                            if(i==0) {
+                                showAlertDialog("Gagal")
+                                binding?.orderBtn?.text = "Order Barang pada keranjang"
+                                binding?.orderBtn?.setBackgroundColor(R.color.primary)
+                            }
                         }
                     }
             }
@@ -155,10 +167,9 @@ class CartActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("$result Order Barang")
         builder.setMessage("Anda $result mengorder barang dari keranjang")
-        if(result == "Sukses") {
+        if (result == "Sukses") {
             builder.setIcon(R.drawable.ic_baseline_check_circle_24)
-        }
-        else {
+        } else {
             builder.setIcon(R.drawable.ic_baseline_clear_24)
         }
         builder.setPositiveButton("Yes") { dialog, _ ->
@@ -188,10 +199,12 @@ class CartActivity : AppCompatActivity() {
             if (data.size > 0) {
                 binding?.noData?.visibility = View.GONE
                 adapter.setData(data)
+                binding?.textInputLayout10?.visibility = View.VISIBLE
                 binding?.orderBtn?.visibility = View.VISIBLE
                 cartList.addAll(data)
             } else {
                 binding?.noData?.visibility = View.VISIBLE
+                binding?.textInputLayout10?.visibility = View.GONE
                 binding?.orderBtn?.visibility = View.GONE
             }
             binding?.progressBar?.visibility = View.GONE

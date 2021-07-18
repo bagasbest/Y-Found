@@ -125,7 +125,7 @@ class OrderDetailActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     if(it["role"].toString() == "admin") {
                         binding?.rvOrder?.layoutManager = LinearLayoutManager(this)
-                        adapter = OrderCartAdapter("admin", sendQTY, intent.getStringExtra(EXTRA_STATUS))
+                        adapter = OrderCartAdapter("admin", sendQTY, intent.getStringExtra(EXTRA_STATUS), binding?.sendBtn)
                         binding?.rvOrder?.adapter = adapter
                         adapter.setData(cartList)
                         if(intent.getStringExtra(EXTRA_STATUS) == "not shipped") {
@@ -136,7 +136,8 @@ class OrderDetailActivity : AppCompatActivity() {
                         adapter = OrderCartAdapter(
                             "not admin",
                             sendQTY,
-                            intent.getStringExtra(EXTRA_STATUS)
+                            intent.getStringExtra(EXTRA_STATUS),
+                            binding?.sendBtn
                         )
                         binding?.rvOrder?.adapter = adapter
                         adapter.setData(cartList)

@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.yfound.yfound.HomepageActivity
 import com.yfound.yfound.LoginActivity
 import com.yfound.yfound.R
 import com.yfound.yfound.databinding.FragmentHomeBinding
 import com.yfound.yfound.ui.home.keranjang_belanjaan.CartActivity
 import com.yfound.yfound.ui.home.pendaftaran_sales.AddSalesActivity
+import com.yfound.yfound.ui.home.verifikasi_pendaftaran.VerifikasiUserActivity
 import com.yfound.yfound.ui.home.verifikasi_sales.VerifikasiActivity
 import java.util.*
 
@@ -35,8 +35,8 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        initRecyclerView()
-        initViewModel("all")
+        // CEK APAKAH ADMIN, SALES, ATAU USER BIASA
+        checkRole()
     }
 
     override fun onCreateView(
@@ -51,8 +51,6 @@ class HomeFragment : Fragment() {
         // CARI PRODUK
         searchProduct()
 
-        // CEK APAKAH ADMIN, SALES, ATAU USER BIASA
-        checkRole()
 
         return binding.root
     }
@@ -74,6 +72,8 @@ class HomeFragment : Fragment() {
                     if (role == "admin") {
                         binding.fabAddProduct.visibility = View.VISIBLE
                     }
+                    initRecyclerView()
+                    initViewModel("all")
                 }
         }
     }
@@ -98,25 +98,31 @@ class HomeFragment : Fragment() {
     }
 
     private fun showAdminMenu() {
-        val options = arrayOf("Verifikasi Sales", "Keranjang Barang", "Logout")
+        val options =
+            arrayOf("Verifikasi Akun Pengguna", "Verifikasi Sales", "Keranjang Barang", "Logout")
 
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Menu Pilihan")
         builder.setItems(options) { dialog, which ->
             when (which) {
                 0 -> {
+                    // VERIFIKASI AKUN PENGGUNA
+                    dialog.dismiss()
+                    startActivity(Intent(activity, VerifikasiUserActivity::class.java))
+
+                }
+                1 -> {
                     // VERIFIKASI SALES
                     dialog.dismiss()
                     startActivity(Intent(activity, VerifikasiActivity::class.java))
 
                 }
-                1 -> {
+                2 -> {
                     // KERANJANG BELANJAAN
                     dialog.dismiss()
                     startActivity(Intent(activity, CartActivity::class.java))
                 }
-
-                2 -> {
+                3 -> {
                     // LOGOUT
                     dialog.dismiss()
                     clickLogout()
@@ -229,7 +235,7 @@ class HomeFragment : Fragment() {
     private fun initRecyclerView() {
         binding.rvProduct.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        adapter = HomeAdapter()
+        adapter = HomeAdapter(role)
         binding.rvProduct.adapter = adapter
     }
 

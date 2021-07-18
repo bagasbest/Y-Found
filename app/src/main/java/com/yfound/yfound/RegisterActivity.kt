@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.yfound.yfound.databinding.ActivityRegisterBinding
+import java.nio.charset.StandardCharsets
 
 
 class RegisterActivity : AppCompatActivity() {
@@ -71,7 +72,7 @@ class RegisterActivity : AppCompatActivity() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     // SIMPAN DATA PENGGUNA KEDALAM FIREBASE FIRESTORE (DATABASE)
-                    saveUserToDB(name, email)
+                    saveUserToDB(name, email, password)
                 } else {
                     binding?.progressBar?.visibility = View.GONE
                     Toast.makeText(
@@ -83,7 +84,7 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    private fun saveUserToDB(name: String, email: String) {
+    private fun saveUserToDB(name: String, email: String, password: String) {
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -91,7 +92,9 @@ class RegisterActivity : AppCompatActivity() {
             "name" to name,
             "email" to email,
             "uid" to uid,
-            "role" to "user"
+            "role" to "user",
+            "status" to "waiting",
+            "password" to toBase64(password),
         )
 
         if (uid != null) {
@@ -103,8 +106,6 @@ class RegisterActivity : AppCompatActivity() {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         binding?.progressBar?.visibility = View.GONE
-                        Toast.makeText(this, "Selamat, Anda berhasil terdaftar", Toast.LENGTH_SHORT)
-                            .show()
 
                         // TAMPILKAN ALERT DIALOG SUKSES
                         showAlertDialogSuccessRegister()
@@ -121,14 +122,21 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+    private fun toBase64(password: String): String {
+        return String(
+            android.util.Base64.encode(password.toByteArray(), android.util.Base64.DEFAULT),
+            StandardCharsets.UTF_8
+        )
+    }
+
     private fun showAlertDialogSuccessRegister() {
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle("Registrasi Berhasil")
         alertDialog.setIcon(R.drawable.ic_baseline_check_circle_24)
-        alertDialog.setMessage("Anda berhasil terdaftar pada aplikasi Y Found")
+        alertDialog.setMessage("Anda berhasil terdaftar pada aplikasi Y Found\n\nUntuk masuk ke aplikasi, silahkan menunggu pendaftaran anda diverifikasi admin")
         alertDialog.setPositiveButton("OKE") { dialog, _ ->
             dialog.dismiss()
-            val intent = Intent(this, HomepageActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()

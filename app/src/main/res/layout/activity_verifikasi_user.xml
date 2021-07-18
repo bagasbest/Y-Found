@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.verifikasi_sales.VerifikasiActivity">
+    tools:context=".ui.home.verifikasi_pendaftaran.VerifikasiUserActivity">
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lihat semua sales yang telah diterima"
+        android:text="Lihat semua pengguna terdaftar"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="16dp"
         android:textAllCaps="false"
@@ -43,7 +43,7 @@
         android:id="@+id/noData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tidak Ada Sales"
+        android:text="Tidak Ada Pendaftar"
         android:textColor="@color/black"
         android:textSize="28sp"
         android:textStyle="bold"

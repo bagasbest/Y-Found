@@ -114,6 +114,15 @@ class OrderDetailSendActivity : AppCompatActivity() {
             SimpleDateFormat("dd MMMM yyyy")
         val format: String = getDate.format(Date())
 
+        @SuppressLint("SimpleDateFormat") val getDate2 =
+            SimpleDateFormat("dd MMMM yyyy, hh:mm:ss")
+        val format2: String = getDate2.format(Date())
+
+        val shippedOrder = mapOf(
+            "status" to "shipped",
+            "orderDate" to format2,
+            "cart" to cartList,
+        )
 
         val delivery = hashMapOf(
             "deliveryId" to timeInMillis,
@@ -128,7 +137,7 @@ class OrderDetailSendActivity : AppCompatActivity() {
                 .firestore
                 .collection("order")
                 .document(it)
-                .update("status", "shipped")
+                .update(shippedOrder)
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful) {
 

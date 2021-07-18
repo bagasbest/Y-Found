@@ -2,17 +2,13 @@ package com.yfound.yfound.ui.home.verifikasi_sales
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.yfound.yfound.LoginActivity
 import com.yfound.yfound.R
 import com.yfound.yfound.databinding.ActivityVerifikasiDetailBinding
 
@@ -28,6 +24,10 @@ class VerifikasiDetailActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Detail Data Sales"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if(intent.getStringExtra(EXTRA_STATUS) == "waiting") {
+            binding?.ll?.visibility = View.VISIBLE
+        }
 
         val data = intent.getParcelableExtra<VerifikasiModel>(EXTRA_SALES) as VerifikasiModel
 
@@ -74,8 +74,7 @@ class VerifikasiDetailActivity : AppCompatActivity() {
                         .delete()
                         .addOnCompleteListener { task ->
                             if(task.isSuccessful) {
-                                binding?.progressBar?.visibility = View.GONE
-                                Toast.makeText(this, "Berhasil menghapus data $name", Toast.LENGTH_SHORT).show()
+                                changeRoleToUser(name)
                             }
                             else {
                                 binding?.progressBar?.visibility = View.GONE
@@ -88,6 +87,25 @@ class VerifikasiDetailActivity : AppCompatActivity() {
                 dialogs.dismiss()
             }
             dialog.show()
+        }
+    }
+
+    private fun changeRoleToUser(name: String?) {
+        uid?.let {
+            Firebase
+                .firestore
+                .collection("users")
+                .document(it)
+                .update("role", "user")
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful) {
+                        binding?.progressBar?.visibility = View.GONE
+                        Toast.makeText(this, "Berhasil menghapus data $name", Toast.LENGTH_SHORT).show()
+                    } else {
+                        binding?.progressBar?.visibility = View.GONE
+                        Toast.makeText(this, "Berhasil menghapus data $name", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
     }
 
@@ -123,7 +141,7 @@ class VerifikasiDetailActivity : AppCompatActivity() {
                                 .firestore
                                 .collection("sales")
                                 .document(uid!!)
-                                .delete()
+                                .update("status", "active")
                         }
                         else {
                             binding?.progressBar?.visibility = View.GONE
@@ -144,6 +162,7 @@ class VerifikasiDetailActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val EXTRA_STATUS = "status"
         const val EXTRA_SALES = "sales"
     }
 }

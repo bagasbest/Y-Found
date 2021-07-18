@@ -1,4 +1,4 @@
-package com.yfound.yfound.ui.home.verifikasi_sales
+package com.yfound.yfound.ui.home.verifikasi_pendaftaran
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,33 +7,33 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class VerifikasiViewModel : ViewModel() {
+class VerifikasiUserViewModel : ViewModel(){
 
-    private val salesList = MutableLiveData<ArrayList<VerifikasiModel>>()
-    private val TAG = VerifikasiViewModel::class.java.simpleName
-    private val listItem = ArrayList<VerifikasiModel>()
+    private val userList = MutableLiveData<ArrayList<VerifikasiUserModel>>()
+    private val TAG = VerifikasiUserViewModel::class.java.simpleName
+    val listItem = ArrayList<VerifikasiUserModel>()
 
-    fun setAllSales() {
+    fun setWaitingUser() {
         listItem.clear()
 
         try {
             Firebase
                 .firestore
-                .collection("sales")
+                .collection("users")
                 .whereEqualTo("status", "waiting")
                 .get()
                 .addOnSuccessListener { documents ->
                     for(document in documents) {
-                        val model = VerifikasiModel()
+                        val model = VerifikasiUserModel()
                         model.name = document.data["name"].toString()
-                        model.phone = document.data["phone"].toString()
-                        model.selfPhoto = document.data["selfPhoto"].toString()
-                        model.ktp = document.data["ktp"].toString()
+                        model.password = document.data["password"].toString()
+                        model.email = document.data["email"].toString()
+                        model.status = document.data["status"].toString()
                         model.uid = document.data["uid"].toString()
 
                         listItem.add(model)
                     }
-                    salesList.postValue(listItem)
+                    userList.postValue(listItem)
                 }
                 .addOnFailureListener {
                     Log.e(TAG, it.message.toString())
@@ -43,27 +43,27 @@ class VerifikasiViewModel : ViewModel() {
         }
     }
 
-    fun setAllActiveSales() {
+    fun setActiveUser() {
         listItem.clear()
 
         try {
             Firebase
                 .firestore
-                .collection("sales")
+                .collection("users")
                 .whereEqualTo("status", "active")
                 .get()
                 .addOnSuccessListener { documents ->
                     for(document in documents) {
-                        val model = VerifikasiModel()
+                        val model = VerifikasiUserModel()
                         model.name = document.data["name"].toString()
-                        model.phone = document.data["phone"].toString()
-                        model.selfPhoto = document.data["selfPhoto"].toString()
-                        model.ktp = document.data["ktp"].toString()
+                        model.password = document.data["password"].toString()
+                        model.email = document.data["email"].toString()
+                        model.status = document.data["status"].toString()
                         model.uid = document.data["uid"].toString()
 
                         listItem.add(model)
                     }
-                    salesList.postValue(listItem)
+                    userList.postValue(listItem)
                 }
                 .addOnFailureListener {
                     Log.e(TAG, it.message.toString())
@@ -73,7 +73,8 @@ class VerifikasiViewModel : ViewModel() {
         }
     }
 
-    fun getAllSales() : LiveData<ArrayList<VerifikasiModel>> {
-        return salesList
+    fun getWaitingUser() : LiveData<ArrayList<VerifikasiUserModel>> {
+        return userList
     }
+
 }
