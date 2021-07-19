@@ -128,6 +128,7 @@ class OrderDetailSendActivity : AppCompatActivity() {
             "deliveryId" to timeInMillis,
             "deliveryDate" to format,
             "location" to location,
+            "locationQuery" to location?.toLowerCase(Locale.getDefault()),
             "dp" to invoiceDp
         )
 

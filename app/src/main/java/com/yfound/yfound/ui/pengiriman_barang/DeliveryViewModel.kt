@@ -28,6 +28,7 @@ class DeliveryViewModel : ViewModel() {
                         model.deliveryDate = document.data["deliveryDate"].toString()
                         model.location = document.data["location"].toString()
                         model.dp = document.data["dp"].toString()
+                        model.locationQuery = document.data["locationQuery"].toString()
 
 
                         listItem.add(model)
@@ -58,6 +59,39 @@ class DeliveryViewModel : ViewModel() {
                         model.deliveryDate = document.data["deliveryDate"].toString()
                         model.location = document.data["location"].toString()
                         model.dp = document.data["dp"].toString()
+                        model.locationQuery = document.data["locationQuery"].toString()
+
+
+                        listItem.add(model)
+                    }
+                    deliveryList.postValue(listItem)
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, it.message.toString())
+                }
+        } catch (error: Exception) {
+            error.printStackTrace()
+        }
+    }
+
+    fun setDeliveryByQuery(query:String) {
+        listItem.clear()
+
+        try {
+            Firebase
+                .firestore
+                .collection("delivery")
+                .whereGreaterThanOrEqualTo("locationQuery", query)
+                .whereLessThanOrEqualTo("locationQuery", query+ '\uf8ff')
+                .get()
+                .addOnSuccessListener { documents ->
+                    for(document in documents) {
+                        val model = DeliveryModel()
+                        model.deliveryId = document.data["deliveryId"].toString()
+                        model.deliveryDate = document.data["deliveryDate"].toString()
+                        model.location = document.data["location"].toString()
+                        model.dp = document.data["dp"].toString()
+                        model.locationQuery = document.data["locationQuery"].toString()
 
 
                         listItem.add(model)

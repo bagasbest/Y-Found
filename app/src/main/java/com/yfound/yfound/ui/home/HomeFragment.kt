@@ -3,8 +3,6 @@ package com.yfound.yfound.ui.home
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -215,21 +213,20 @@ class HomeFragment : Fragment() {
 
 
     private fun searchProduct() {
-        binding.searchEt.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}
-            override fun afterTextChanged(edit: Editable) {
-                if (edit.isNotEmpty()) {
-                    // Business logic for search here
-                    val query = edit.toString().toLowerCase(Locale.getDefault())
-                    initRecyclerView()
-                    initViewModel(query)
-                } else {
-                    initRecyclerView()
-                    initViewModel("all")
-                }
+        binding.searchIv.setOnClickListener {
+            val edit = binding.searchEt.text.toString().trim()
+
+            if (edit.isNotEmpty()) {
+                // Business logic for search here
+                val query = edit.toLowerCase(Locale.getDefault())
+                initRecyclerView()
+                initViewModel(query)
+            } else {
+                initRecyclerView()
+                initViewModel("all")
             }
-        })
+
+        }
     }
 
     private fun initRecyclerView() {

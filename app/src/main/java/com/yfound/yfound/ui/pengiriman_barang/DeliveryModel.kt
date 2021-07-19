@@ -9,4 +9,5 @@ data class DeliveryModel(
     var deliveryDate: String? = null,
     var location: String? = null,
     var dp: String? = null,
+    var locationQuery: String? = null,
 ) : Parcelable

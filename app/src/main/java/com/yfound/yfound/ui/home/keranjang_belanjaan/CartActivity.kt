@@ -76,6 +76,7 @@ class CartActivity : AppCompatActivity() {
             }
 
             val cartList2 = ArrayList<CartModel2>()
+            val cartList3 = ArrayList<String>()
 
             binding?.orderBtn?.text = "Silahkan tunggu"
             binding?.orderBtn?.setBackgroundColor(R.color.mermud)
@@ -95,6 +96,8 @@ class CartActivity : AppCompatActivity() {
                             model2.dp = document.data["dp"].toString()
 
                             cartList2.add(model2)
+                            cartList3.add(document.data["name"].toString()
+                                .lowercase(Locale.getDefault()))
                         }
 
                         val timeInMillis = System.currentTimeMillis().toString()
@@ -111,7 +114,8 @@ class CartActivity : AppCompatActivity() {
                             "orderDate" to format,
                             "cart" to cartList2,
                             "location" to location,
-                            "status" to "not shipped"
+                            "status" to "not shipped",
+                            "productName" to cartList3,
                         )
 
                         Firebase

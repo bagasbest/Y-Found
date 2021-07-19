@@ -23,6 +23,7 @@ class DeliveryFragment : Fragment(), OnDateSetListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var show: Boolean = true
 
 
     override fun onCreateView(
@@ -36,7 +37,7 @@ class DeliveryFragment : Fragment(), OnDateSetListener {
         _binding = FragmentDeliveryBinding.inflate(inflater, container, false)
 
         initRecyclerview()
-        initViewModel("all")
+        initViewModel("all", "all")
 
 
         return binding.root
@@ -54,26 +55,58 @@ class DeliveryFragment : Fragment(), OnDateSetListener {
 
         binding.allDelivery.setOnClickListener {
             initRecyclerview()
-            initViewModel("all")
+            initViewModel("all", "all")
+        }
+
+        binding.showHide.setOnClickListener {
+            if(show) {
+                binding.constraintLayout.visibility = View.GONE
+                show = false
+            }
+            else {
+                binding.constraintLayout.visibility = View.VISIBLE
+                show = true
+            }
+        }
+
+        binding.searchIv.setOnClickListener {
+            val edit = binding.searchEt.text.toString().trim()
+
+            if (edit.isNotEmpty()) {
+                // Business logic for search here
+                val query = edit.toLowerCase(Locale.getDefault())
+                initRecyclerview()
+                initViewModel("all", query)
+            } else {
+                initRecyclerview()
+                initViewModel("all", "all")
+            }
+
         }
 
     }
 
     private fun initRecyclerview() {
-        binding.rvDelivery.layoutManager = LinearLayoutManager(activity)
+        val layoutManager = LinearLayoutManager(activity)
+        layoutManager.reverseLayout = true
+        layoutManager.stackFromEnd = true
+        binding.rvDelivery.layoutManager = layoutManager
         adapter = DeliveryAdapter()
         binding.rvDelivery.adapter = adapter
     }
 
-    private fun initViewModel(date: String) {
+    private fun initViewModel(date: String, query: String) {
         val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[DeliveryViewModel::class.java]
 
         binding.progressBar.visibility = View.VISIBLE
-        if(date == "all") {
+        if(date == "all" && query == "all") {
             viewModel.setAllDelivery()
         }
-        else {
+        else if (date != "all"){
             viewModel.setDeliveryByDate(date)
+        }
+        else if(query != "all") {
+            viewModel.setDeliveryByQuery(query)
         }
         viewModel.getAllDelivery().observe(viewLifecycleOwner, {
             if(it.size > 0) {
@@ -104,7 +137,7 @@ class DeliveryFragment : Fragment(), OnDateSetListener {
         //set untuk TextView
         binding.calendarBtn.text = dateFormat.format(calendar.time)
         initRecyclerview()
-        initViewModel(dateFormat.format(calendar.time))
+        initViewModel(dateFormat.format(calendar.time), "all")
     }
 
 }

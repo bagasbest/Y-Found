@@ -46,6 +46,40 @@ class OrderViewModel : ViewModel() {
         }
     }
 
+    fun setSearchedByStatus(status: String, query: String) {
+        listItem.clear()
+
+        try {
+            Firebase
+                .firestore
+                .collection("order")
+                .whereEqualTo("status", status)
+                .whereArrayContains("productName", query)
+                .get()
+                .addOnSuccessListener { documents ->
+                    for(document in documents) {
+                        val model = OrderModel()
+                        model.buyerId = document.data["buyerId"].toString()
+                        model.buyerName = document.data["buyerName"].toString()
+                        model.orderId = document.data["orderId"].toString()
+                        model.orderDate = document.data["orderDate"].toString()
+                        model.buyerId = document.data["buyerId"].toString()
+                        model.location = document.data["location"].toString()
+                        model.status = document.data["status"].toString()
+                        model.cart = document.toObject(OrderModel::class.java).cart
+
+                        listItem.add(model)
+                    }
+                    orderList.postValue(listItem)
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, it.message.toString())
+                }
+        } catch (error: Exception) {
+            error.printStackTrace()
+        }
+    }
+
     fun getAllOrder() : LiveData<ArrayList<OrderModel>> {
         return orderList
     }
